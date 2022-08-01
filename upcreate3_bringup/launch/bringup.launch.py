@@ -32,7 +32,8 @@ def generate_launch_description():
 
     # realsense launcher
     realsense_launch_file = PathJoinSubstitution(
-        [include_path, '.', 'realsense.launch.py'])
+        [include_path, '.', 'realsense.launch.py']
+    )
     
     realsense_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(realsense_launch_file)
@@ -49,8 +50,11 @@ def generate_launch_description():
     )
 
 
+
+
     # Launch Description
     ld = LaunchDescription()
     ld.add_action(realsense_launch)
+    ld.add_action(description_launch)
     ld.add_action(rtabmap_launch)
     return ld

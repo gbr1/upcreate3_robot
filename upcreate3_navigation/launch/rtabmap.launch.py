@@ -8,15 +8,20 @@ def generate_launch_description():
     rtabmap_namespace = 'rtabmap'
     rtabmap_ns_prefix = '/'+rtabmap_namespace
 
+    qos = 2
+
     parameters=[{
         'frame_id':'camera_link',
         'subscribe_depth':True,
-        'approx_sync':False,
+        'subscribe_scan':False,
+        'approx_sync':True,
         'Reg/Strategy':'1',
         'Reg/Force3DoF':'true',
         'RGBD/NeighborLinkRefining':'True',
         'Grid/RangeMin':'0.2',
-        'Optimizer/GravitySigma':'0'}
+        'Optimizer/GravitySigma':'0',
+        'qos_odom':qos,
+        'qos_image':qos}
     ]
 
     remappings=[
@@ -40,6 +45,12 @@ def generate_launch_description():
         remappings=remappings #+vo_specific_remappings
     )
 
+    rgbd_sync_node =  Node(
+            package='rtabmap_ros', executable='rgbd_sync', output='screen',
+            parameters=parameters,
+            remappings=remappings+rtabmap_specific_remappings
+    )
+
     rtabmap_node = Node(
         package='rtabmap_ros', executable='rtabmap', output='screen',
         namespace=rtabmap_namespace,
@@ -49,7 +60,8 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(vo_node)
+    #ld.add_action(vo_node)
+    #ld.add_action(rgbd_sync_node)
     ld.add_action(rtabmap_node)
 
 
