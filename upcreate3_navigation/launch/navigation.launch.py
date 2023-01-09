@@ -36,15 +36,21 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # standard bringup used in nav2 guides
     navigation_bringup_path = get_package_share_directory('nav2_bringup')
+    upcreate3_navigation_path = get_package_share_directory('upcreate3_navigation')
 
     # description launcher
     navigation_bringup_launch_file = PathJoinSubstitution(
         [navigation_bringup_path, 'launch', 'navigation_launch.py']
     )
 
+    navigation_config_file = PathJoinSubstitution(
+        [upcreate3_navigation_path, 'config', 'nav.yaml']
+    )
+
+
     navigation_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(navigation_bringup_launch_file),
-        launch_arguments = {'params_file': '/home/up/dev_ws/src/upcreate3_robot/upcreate3_navigation/config/nav.yaml',
+        launch_arguments = {'params_file': navigation_config_file,
                            }.items()
     )
 
