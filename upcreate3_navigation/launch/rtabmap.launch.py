@@ -42,6 +42,7 @@ def generate_launch_description():
         'Reg/Force3DoF':'true',
         'RGBD/NeighborLinkRefining':'True',
         'Grid/RangeMin':'0.2',
+        'Grid/FromDepth': 'True',
         'Optimizer/GravitySigma':'0',
         'qos_odom':qos,
         'qos_image':qos}

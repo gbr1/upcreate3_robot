@@ -21,3 +21,35 @@
 # THE SOFTWARE.
 #
 #
+
+from ament_index_python.packages import get_package_share_directory
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import Command, PathJoinSubstitution
+from launch.substitutions.launch_configuration import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import IncludeLaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    # standard bringup used in nav2 guides
+    navigation_bringup_path = get_package_share_directory('nav2_bringup')
+
+    # description launcher
+    navigation_bringup_launch_file = PathJoinSubstitution(
+        [navigation_bringup_path, 'launch', 'navigation_launch.py']
+    )
+
+    navigation_bringup_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(navigation_bringup_launch_file),
+        launch_arguments = {'params_file': '/home/up/dev_ws/src/upcreate3_robot/upcreate3_navigation/config/nav.yaml',
+                           }.items()
+    )
+
+
+    # Launch Description
+    ld = LaunchDescription()
+    ld.add_action(navigation_bringup_launch)
+    return ld
