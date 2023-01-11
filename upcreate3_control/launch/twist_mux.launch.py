@@ -22,6 +22,7 @@
 #
 #
 
+
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -31,39 +32,28 @@ from launch.substitutions.launch_configuration import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from launch_ros.actions import Node
+from launch.substitutions import TextSubstitution
+import os
 
 
 def generate_launch_description():
-    # standard bringup used in nav2 guides
-    #navigation_bringup_path = get_package_share_directory('nav2_bringup')
-    
-    # description launcher
-    #navigation_bringup_launch_file = PathJoinSubstitution(
-    #    [navigation_bringup_path, 'launch', 'navigation_launch.py']
-    #)
-
-    # custom bringup used to remap cmd_vel
-    navigation_bringup_path = get_package_share_directory('upcreate3_navigation')
-    navigation_bringup_launch_file = PathJoinSubstitution(
-        [navigation_bringup_path, 'launch', 'nav2.launch.py']
+    # upcreate3 twist_mux config
+    upcreate3_control_path = get_package_share_directory('upcreate3_control')
+    twist_mux_config_file = PathJoinSubstitution(
+        [upcreate3_control_path, 'config', 'twist_mux.yaml']
     )
 
-    # configurations
-    upcreate3_navigation_path = get_package_share_directory('upcreate3_navigation')
-
-    navigation_config_file = PathJoinSubstitution(
-        [upcreate3_navigation_path, 'config', 'nav.yaml']
-    )
-
-    # launch file
-    navigation_bringup_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(navigation_bringup_launch_file),
-        launch_arguments = {'params_file': navigation_config_file,
-                           }.items()
-    )
+    config_filepath=LaunchConfiguration('config_filepath', default=twist_mux_config_file)
+    twist_mux_node = Node(
+            package='twist_mux',
+            executable='twist_mux',
+            name='twist_mux_node',
+            parameters=[config_filepath],
+            remappings=[('cmd_vel_out', 'cmd_vel')]
+        )
 
 
-    # Launch Description
+    # Launch twist_mux
     ld = LaunchDescription()
-    ld.add_action(navigation_bringup_launch)
+    ld.add_action(twist_mux_node)
     return ld

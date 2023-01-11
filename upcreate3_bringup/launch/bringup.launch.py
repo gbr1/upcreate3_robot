@@ -37,7 +37,9 @@ def generate_launch_description():
     # upcreate3 folders
     upcreate3_bringup_path = get_package_share_directory('upcreate3_bringup')
     upcreate3_description_path = get_package_share_directory('upcreate3_description')
+    upcreate3_control_path = get_package_share_directory('upcreate3_control')
     upcreate3_navigation_path = get_package_share_directory('upcreate3_navigation')
+
 
     # description launcher
     description_launch_file = PathJoinSubstitution(
@@ -72,6 +74,23 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(rtabmap_launch_file)
     )
 
+    # navigation launcher
+    navigation_launch_file = PathJoinSubstitution(
+        [upcreate3_navigation_path, 'launch', 'navigation.launch.py']
+    )
+
+    navigation_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(navigation_launch_file)
+    )
+
+    # twist_mux
+    twist_mux_launch_file = PathJoinSubstitution(
+        [upcreate3_control_path, 'launch', 'twist_mux.launch.py'] 
+    )
+
+    twist_mux_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(twist_mux_launch_file)
+    )
 
 
 
@@ -80,4 +99,6 @@ def generate_launch_description():
     ld.add_action(realsense_launch)
     ld.add_action(description_launch)
     ld.add_action(rtabmap_launch)
+    ld.add_action(navigation_launch)
+    ld.add_action(twist_mux_launch)
     return ld

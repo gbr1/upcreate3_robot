@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    topics:
+      joystick:
+        topic   : joy_cmd_vel
+        timeout : 0.5
+        priority: 100
+      navigation:
+        topic   : nav_cmd_vel
+        timeout : 0.5
+        priority: 10
