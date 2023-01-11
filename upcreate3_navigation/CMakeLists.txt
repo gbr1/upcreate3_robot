@@ -30,6 +30,10 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(nav2_common REQUIRED)
+find_package(navigation2 REQUIRED)
+
+
 
 install(
   DIRECTORY launch config rviz

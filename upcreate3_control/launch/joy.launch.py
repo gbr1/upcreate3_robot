@@ -22,6 +22,7 @@
 #
 #
 
+
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -31,39 +32,41 @@ from launch.substitutions.launch_configuration import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from launch_ros.actions import Node
+from launch.substitutions import TextSubstitution
+import os
+
+
 
 
 def generate_launch_description():
-    # standard bringup used in nav2 guides
-    #navigation_bringup_path = get_package_share_directory('nav2_bringup')
-    
-    # description launcher
-    #navigation_bringup_launch_file = PathJoinSubstitution(
-    #    [navigation_bringup_path, 'launch', 'navigation_launch.py']
-    #)
-
-    # custom bringup used to remap cmd_vel
-    navigation_bringup_path = get_package_share_directory('upcreate3_navigation')
-    navigation_bringup_launch_file = PathJoinSubstitution(
-        [navigation_bringup_path, 'launch', 'nav2.launch.py']
-    )
-
-    # configurations
-    upcreate3_navigation_path = get_package_share_directory('upcreate3_navigation')
-
-    navigation_config_file = PathJoinSubstitution(
-        [upcreate3_navigation_path, 'config', 'nav.yaml']
-    )
-
-    # launch file
-    navigation_bringup_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(navigation_bringup_launch_file),
-        launch_arguments = {'params_file': navigation_config_file,
-                           }.items()
+    # upcreate3 joy config
+    upcreate3_joy_path = get_package_share_directory('upcreate3_control')
+    joy_config_file = PathJoinSubstitution(
+        [upcreate3_joy_path, 'config', 'joy.yaml']
     )
 
 
-    # Launch Description
+    joy_node = Node(
+            package='joy',
+            executable='joy_node',
+            name='joy_node',
+            parameters=[{
+                'deadzone': 0.3,
+                'autorepeat_rate': 20.0,
+            }])
+
+    config_filepath=LaunchConfiguration('config_filepath', default=joy_config_file)
+    teleop_node = Node(
+            package='teleop_twist_joy',
+            executable='teleop_node',
+            name='teleop_twist_joy_node',
+            parameters=[config_filepath],
+            remappings=[('cmd_vel', 'joy_cmd_vel')]
+        )
+
+
+    # Launch joy teleop
     ld = LaunchDescription()
-    ld.add_action(navigation_bringup_launch)
+    ld.add_action(joy_node)
+    ld.add_action(teleop_node)
     return ld

@@ -21,7 +21,7 @@ THE SOFTWARE.
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>upcreate3_robot</name>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>UP Create 3 robot package</description>
   <maintainer email="giovannididio.bruno@gmail.com">up</maintainer>
   <license>MIT</license>
